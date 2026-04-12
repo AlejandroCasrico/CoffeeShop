@@ -10,7 +10,9 @@ namespace CoffeShop.Models
     {
         [Key]
         public int Id { get; set; }
+        [Required]
         public string? CategoryName { get; set; }
+        [Required]
         public string? Description { get; set; }
         public DateTime CreationDate { get; set; }
     }
