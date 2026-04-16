@@ -25,10 +25,15 @@ namespace CoffeeShop.Services
             return category;
         }
 
-        public Task<bool> DeleteCategoryAsync(Category category)
+        public async Task<bool> DeleteCategoryAsync(int id)
         {
+            var category =  await _db.Categories.FindAsync(id);
+            if(category == null)
+            {
+                return false;
+            }
             _db.Categories.Remove(category);
-            return Save();
+            return await Save();
         }
 
         public async Task<IEnumerable<Category>> GetCategories()
@@ -53,6 +58,10 @@ namespace CoffeeShop.Services
         {
             return await _db.SaveChangesAsync() > 0;
         }
-
+        public  bool CategoryExists(string name)
+        {
+            bool existingCategory =  _db.Categories.Any(c => c.CategoryName!.Trim().ToLower() == name.Trim().ToLower());  
+            return existingCategory;
+        }
     }
 }

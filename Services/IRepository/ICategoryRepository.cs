@@ -14,8 +14,8 @@ namespace CoffeeShop.Services.IRepository
        Task<Category?> GetCategory(int id);
        Task<Category> CreateCategoryAsync(Category category);
        Task<Category?> UpdateCategoryAsync(Category category);
-       Task<bool> DeleteCategoryAsync(Category category);
+       Task<bool> DeleteCategoryAsync(int id);
        Task<bool> Save();
-
+       bool CategoryExists(string name);
     }
 }
