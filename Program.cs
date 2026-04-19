@@ -13,6 +13,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<ICategoryRepository,CategoryService>();
+builder.Services.AddScoped<IProductService,ProductService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -25,7 +26,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
-
+app.UseStaticFiles();
 app.MapControllers();
 
 app.Run();

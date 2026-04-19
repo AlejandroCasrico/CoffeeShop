@@ -138,3 +138,4 @@ C:\EjerciciosPractica\CoffeeShop\obj\Debug\net8.0\refint\CoffeShop.dll
 C:\EjerciciosPractica\CoffeeShop\obj\Debug\net8.0\CoffeShop.pdb
 C:\EjerciciosPractica\CoffeeShop\obj\Debug\net8.0\CoffeShop.genruntimeconfig.cache
 C:\EjerciciosPractica\CoffeeShop\obj\Debug\net8.0\ref\CoffeShop.dll
+C:\EjerciciosPractica\CoffeeShop\bin\Debug\net8.0\CoffeShop.staticwebassets.runtime.json
