@@ -1,0 +1,12 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace CoffeeShop.Services.IRepository
+{
+    public interface IImageFileRepository
+    {
+        Task<string> SaveImageAsync(IFormFile file);
+    }
+}

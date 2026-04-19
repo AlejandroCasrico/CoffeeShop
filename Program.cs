@@ -14,6 +14,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<ICategoryRepository,CategoryService>();
 builder.Services.AddScoped<IProductService,ProductService>();
+builder.Services.AddScoped<IImageFileRepository, FileService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

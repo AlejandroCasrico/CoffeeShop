@@ -46,9 +46,10 @@ namespace CoffeeShop.Services
             return await _db.SaveChangesAsync() > 0;
         }
 
-        public async Task<Product> UpdateProoduct(Product product)
+        public async Task<Product> UpdateProduct(Product product)
         {
            product.UpdateDate = DateTime.Now;
+        
            _db.Product.Update(product);
            await Save();
            return product;

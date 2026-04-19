@@ -19,10 +19,12 @@ namespace CoffeeShop.Controllers
     public class ProductsController : Controller
     {
         private readonly IProductService _ps;
+        private readonly IImageFileRepository _img;
 
-        public ProductsController(IProductService ps)
+        public ProductsController(IProductService ps, IImageFileRepository img)
         {
             _ps = ps;
+            _img = img;
         }
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status403Forbidden)] 
@@ -108,15 +110,71 @@ namespace CoffeeShop.Controllers
             };
             if(createProductDTO.ImageFile != null)
             {
-                var fileName = Guid.NewGuid().ToString()+ Path.GetExtension(createProductDTO.ImageFile.FileName);
-                var path = Path.Combine("wwwroot/images",fileName);
-                using var stream = new FileStream(path,FileMode.Create);
-                await createProductDTO.ImageFile.CopyToAsync(stream);
-                productoDTO.ImgUrl = "/images/" + fileName;
+                productoDTO.ImgUrl = await _img.SaveImageAsync(createProductDTO.ImageFile);
             }
           
             var createdProduct = await _ps.CreateProductAsync(productoDTO);
            return Ok(createdProduct);
+        }
+        [HttpPut("{productId:int}",Name ="UpdateProduct")]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)] 
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> UpdateProduct(int productId,[FromForm] UpdateProductDTO updateProductDTO)
+        {
+            if(updateProductDTO is null)
+            {
+                  ModelState.AddModelError("Error",$"El producto no puede ser null ");
+                 return BadRequest();   
+            }
+            var product= await _ps.GetProductByIdAsync(productId);
+            if(product == null)
+            {
+                return NotFound();
+            }
+           product.Name = updateProductDTO.Name;
+           product.Description = updateProductDTO.Description;
+           product.Price = updateProductDTO.Price;
+           product.Stock = updateProductDTO.Stock;
+           product.CategoryId = updateProductDTO.CategoryId;
+            if (updateProductDTO.ImageFile != null)
+            {
+                product.ImgUrl =  await _img.SaveImageAsync(updateProductDTO.ImageFile);
+            }
+            var updatedProduct  =await _ps.UpdateProduct(product);
+            if(updatedProduct is null)
+            {
+                ModelState.AddModelError("Error",$"Algo pasó al actualizar el producto");
+                return BadRequest(ModelState);
+            }
+           return NoContent();
+        }
+        [HttpDelete("{id:int}",Name ="DeleteProduct")]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)] 
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> DeleteProduct(int id)
+        {
+            if( id == 0)
+            {
+                  return BadRequest(ModelState);
+            }
+            var product = await _ps.GetProductByIdAsync(id);
+            if(product == null)
+            {
+                return NotFound();
+            }
+           if(!await _ps.DeleteProductAsync(product.ProductId))
+            {
+                  ModelState.AddModelError("Error",$"Algo pasó al eliminar el producto");
+                return BadRequest(ModelState);
+            }
+            return NoContent();
+
         }
     }
 }
