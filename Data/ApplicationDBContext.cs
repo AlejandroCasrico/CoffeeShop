@@ -19,5 +19,7 @@ namespace CoffeShop.Data
         public DbSet<Product> Product{get;set;}
         public DbSet<Category> Categories{get;set;}
         public DbSet<User> Users{get;set;}
+        public DbSet<Venta> Ventas {get;set;}
+        public DbSet<SaleDetail> SaleDetails{get;set;}
     }
 }

@@ -28,5 +28,7 @@ namespace CoffeeShop.Models.DTOs
         public int CategoryId { get; set; }
         [ForeignKey("CategoryId")]
         public Category? Category{get;set;}
+ 
+         public ICollection<SaleDetail>? Details { get; set; }
     }
 }

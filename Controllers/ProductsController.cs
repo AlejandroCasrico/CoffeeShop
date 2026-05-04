@@ -108,6 +108,11 @@ namespace CoffeeShop.Controllers
                 Stock = createProductDTO.Stock,
                 CategoryId = createProductDTO.CategoryId
             };
+            if(productoDTO.CategoryId == 0)
+            {
+                ModelState.AddModelError("Error",$"La categoria no puede ser 0");
+                return BadRequest(ModelState);
+            }
             if(createProductDTO.ImageFile != null)
             {
                 productoDTO.ImgUrl = await _img.SaveImageAsync(createProductDTO.ImageFile);

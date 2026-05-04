@@ -4,6 +4,7 @@ using CoffeShop.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CoffeShop.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20260424031816_AddSalesTable")]
+    partial class AddSalesTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -86,35 +89,6 @@ namespace CoffeShop.Migrations
                     b.ToTable("Product");
                 });
 
-            modelBuilder.Entity("CoffeeShop.Models.SaleDetail", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<int>("VentaId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("VentaId");
-
-                    b.ToTable("SaleDetails");
-                });
-
             modelBuilder.Entity("CoffeeShop.Models.User", b =>
                 {
                     b.Property<int>("Id")
@@ -168,9 +142,17 @@ namespace CoffeShop.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Ventas");
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("Venta");
                 });
 
             modelBuilder.Entity("CoffeeShop.Models.DTOs.Product", b =>
@@ -184,33 +166,20 @@ namespace CoffeShop.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("CoffeeShop.Models.SaleDetail", b =>
+            modelBuilder.Entity("CoffeeShop.Models.Venta", b =>
                 {
                     b.HasOne("CoffeeShop.Models.DTOs.Product", "Product")
-                        .WithMany("Details")
+                        .WithMany("Ventas")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CoffeeShop.Models.Venta", "Venta")
-                        .WithMany("Details")
-                        .HasForeignKey("VentaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Product");
-
-                    b.Navigation("Venta");
                 });
 
             modelBuilder.Entity("CoffeeShop.Models.DTOs.Product", b =>
                 {
-                    b.Navigation("Details");
-                });
-
-            modelBuilder.Entity("CoffeeShop.Models.Venta", b =>
-                {
-                    b.Navigation("Details");
+                    b.Navigation("Ventas");
                 });
 #pragma warning restore 612, 618
         }

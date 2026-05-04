@@ -11,7 +11,7 @@ namespace CoffeeShop.Services
 {
     public class ProductService : IProductService
     {
-        private ApplicationDBContext _db;
+        private readonly ApplicationDBContext _db;
         public ProductService(ApplicationDBContext db)
         {
             _db = db;
