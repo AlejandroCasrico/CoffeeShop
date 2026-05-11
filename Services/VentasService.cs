@@ -19,7 +19,7 @@ namespace CoffeeShop.Services
             _db = db;     
             _productoRepository = productoRepository;       
         }
-        public async Task<Venta> AddAsyncVenta(List<SalesItemDTO> items )
+        public async Task<SaleDTO> AddAsyncVenta(List<SalesItemDTO> items )
         {
             var venta = new Venta
             {
@@ -47,22 +47,64 @@ namespace CoffeeShop.Services
             }
             _db.Ventas.Add(venta);
             await _db.SaveChangesAsync();
-            return venta;
+            var ventaDTO = new SaleDTO
+            {
+                Id = venta.Id,
+                Date = venta.Date,
+                Details = venta.Details.Select(d => new SaleDetailDTO
+                {
+                    ProductName = _productoRepository.GetProductByIdAsync(d.ProductId).Result?.Name,
+                    Quantity = d.Quantity,
+                    Price = d.Price
+                }).ToList()
+            };
+            return ventaDTO;
         }
 
-        public Task<Venta> AddAsyncVenta(Venta venta)
+       
+        public async  Task<SaleDTO?> GetVentaIdAsync(int id)
         {
-            throw new NotImplementedException();
+            var venta  = await _db.Ventas
+            .Include(v => v.Details)
+            .ThenInclude(d => d.Product)
+            .FirstOrDefaultAsync(v => v.Id == id);
+            if(venta is null)
+            {
+                return null;
+            }
+            return new SaleDTO
+            {
+                 Id = venta.Id,
+                 Date = venta.Date,
+                 Details = venta.Details?.Select(d => new SaleDetailDTO
+                {
+                    ProductName = d.Product!.Name,
+                    Quantity = d.Quantity,
+                    Price = d.Price
+
+                }).ToList()
+            };
         }
 
-        public async  Task<Venta?> GetVentaIdAsync(int id)
+        public async Task<ICollection<SaleDTO>> Ventas()
         {
-            return await _db.Ventas.Include(d => d.Details).FirstOrDefaultAsync(v=> v.Id == id);
-        }
-
-        public async Task<ICollection<Venta>> Ventas()
-        {
-          return  await _db.Ventas.AsNoTracking().Include(d => d.Details).OrderByDescending(v => v.Date).ToListAsync();
+            var ventas  = await _db.Ventas.AsNoTracking()
+            .Include(d => d.Details)
+            .ThenInclude(d=> d.Product)
+            .OrderByDescending(v=> v.Date)
+            .ToListAsync();
+            return ventas.Select(v => new SaleDTO
+            {
+                Id = v.Id,
+                Date = v.Date,
+                Details = v.Details?.Select(d => new SaleDetailDTO
+                {
+                
+                    ProductName = d.Product?.Name,
+                    Quantity = d.Quantity,
+                    Price = d.Price
+                }).ToList()
+            }).ToList();
         }
     }
 }

@@ -15,6 +15,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<ICategoryRepository,CategoryService>();
 builder.Services.AddScoped<IProductService,ProductService>();
 builder.Services.AddScoped<IImageFileRepository, FileService>();
+builder.Services.AddScoped<IVentaRepository, VentasService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
